@@ -1,9 +1,29 @@
-from denario import Denario, Journal
+import sys
+from pathlib import Path
 from typing import Dict, Any
 from core.mode_registry import registry
 
+# Add Denario to path for imports
+DENARIO_PATH = Path(__file__).parent.parent.parent.parent / "Denario"
+sys.path.insert(0, str(DENARIO_PATH))
+
+try:
+    from denario import Journal
+    DENARIO_AVAILABLE = True
+except ImportError:
+    DENARIO_AVAILABLE = False
+    # Mock Journal enum
+    class Journal:
+        NONE = "NONE"
+        AAS = "AAS"
+        APS = "APS"
+        ICML = "ICML"
+        NeurIPS = "NeurIPS"
+        JHEP = "JHEP"
+        PASJ = "PASJ"
+
 def execute_research_mode(
-    denario: Denario,
+    denario,
     input_data: Dict[str, Any],
     mode_config: Dict[str, Any]
 ) -> Dict[str, Any]:

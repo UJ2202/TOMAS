@@ -1,3 +1,4 @@
+# FastAPI and core dependencies
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
@@ -6,3 +7,28 @@ python-multipart==0.0.6
 python-dotenv==1.0.0
 aiofiles==23.2.1
 PyPDF2==3.0.1
+
+# Denario dependencies
+langchain-google-genai
+langchain-anthropic>=0.3.10
+langchain-openai>=0.3.12
+langgraph>=0.3.25
+google-cloud-aiplatform
+google-ai-generativelanguage>=0.6.17
+flatbuffers>=24.12.23
+filelock>=3.17.0
+pymupdf
+pillow
+jsonschema
+futurehouse-client
+json5
+
+# CMBAgent dependencies
+anthropic
+mistralai
+ruamel.yaml
+cmbagent_autogen>=0.0.91post11
+jsonref==1.1.0
+cobaya
+pandas>=2.2
+ipython
