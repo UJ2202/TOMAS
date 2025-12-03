@@ -26,7 +26,18 @@ class DenarioService:
             try:
                 self.key_manager = KeyManager()
                 self.key_manager.get_keys_from_env()
+
+                # Debug: Check which keys are loaded
+                keys_status = []
+                if self.key_manager.OPENAI:
+                    keys_status.append(f"OpenAI: {self.key_manager.OPENAI[:10]}...")
+                if self.key_manager.GEMINI:
+                    keys_status.append(f"Gemini: {self.key_manager.GEMINI[:10]}...")
+                if self.key_manager.ANTHROPIC:
+                    keys_status.append(f"Anthropic: {self.key_manager.ANTHROPIC[:10]}...")
+
                 print(f"✅ DenarioService initialized (workspace: {workspace_dir})")
+                print(f"🔑 API Keys loaded: {', '.join(keys_status) if keys_status else 'None'}")
             except Exception as e:
                 print(f"⚠️  Warning: Could not load API keys: {e}")
         else:

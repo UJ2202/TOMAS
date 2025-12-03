@@ -1,0 +1,163 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tomas-backend"
+version = "1.0.0"
+description = "TOMAS - Task-Oriented Multi-Agent System Backend"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "TOMAS Team"}
+]
+keywords = ["multi-agent", "ai", "research", "automation", "denario", "cmbagent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # FastAPI and core dependencies
+    "fastapi==0.104.1",
+    "uvicorn[standard]==0.24.0",
+    "pydantic>=2.6.1",
+    "pydantic-settings>=2.1.0",
+    "python-multipart==0.0.6",
+    "python-dotenv==1.0.0",
+    "aiofiles==23.2.1",
+    "PyPDF2==3.0.1",
+
+    # Denario dependencies
+    "langchain-google-genai",
+    "langchain-anthropic>=0.3.10",
+    "langchain-openai>=0.3.12",
+    "langgraph>=0.3.25",
+    "google-cloud-aiplatform",
+    "google-ai-generativelanguage>=0.6.17",
+    "flatbuffers>=24.12.23",
+    "filelock>=3.17.0",
+    "pymupdf",
+    "pillow",
+    "jsonschema",
+    "futurehouse-client",
+    "json5",
+
+    # CMBAgent dependencies
+    "anthropic",
+    "mistralai",
+    "ruamel.yaml",
+    "cmbagent_autogen>=0.0.91post11",
+    "jsonref==1.1.0",
+    "cobaya",
+    "pandas>=2.2",
+    "ipython",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+    "ruff>=0.0.285",
+    "mypy>=1.5.0",
+    "httpx>=0.24.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/tomas"
+Documentation = "https://github.com/yourusername/tomas#readme"
+Repository = "https://github.com/yourusername/tomas"
+Issues = "https://github.com/yourusername/tomas/issues"
+
+[project.scripts]
+tomas-server = "main:main"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "modes*", "services*", "strategies*", "routers*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | denario
+  | cmbagent
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "denario",
+    "cmbagent",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["core", "modes", "services", "strategies", "routers"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = [
+    "venv",
+    "denario",
+    "cmbagent",
+]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"

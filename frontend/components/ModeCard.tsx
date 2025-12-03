@@ -1,7 +1,7 @@
 'use client';
 
 import { AgentMode } from '@/lib/types';
-import { FlaskConical, FileText, TicketCheck } from 'lucide-react';
+import { FlaskConical, FileText, Ticket } from 'lucide-react';
 
 interface ModeCardProps {
   mode: AgentMode;
@@ -11,7 +11,7 @@ interface ModeCardProps {
 const iconMap: Record<string, any> = {
   FlaskConical,
   FileText,
-  TicketCheck,
+  Ticket,
 };
 
 export default function ModeCard({ mode, onClick }: ModeCardProps) {

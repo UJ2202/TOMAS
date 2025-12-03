@@ -81,7 +81,7 @@ def execute_rfp_sow_mode(
         
         # Stage 2: Generate architecture proposal (using idea generation)
         print("🏗️ Generating cloud architecture proposal...")
-        denario.get_idea(mode="fast", llm=llm, iterations=3, verbose=True)
+        denario.get_idea(mode="fast", llm=llm)
         results['executive_summary'] = denario.research.idea
         
         # Stage 3: Develop detailed design (using methodology)

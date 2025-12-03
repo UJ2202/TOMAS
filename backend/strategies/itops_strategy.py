@@ -93,7 +93,7 @@ Priority Filter: {', '.join(priority_filter)}
         
         # Stage 2: Generate analysis plan and initial insights
         print("🔍 Generating analysis insights...")
-        denario.get_idea(mode="fast", llm=llm, iterations=2, verbose=True)
+        denario.get_idea(mode="fast", llm=llm)
         results['summary_report'] = denario.research.idea
         
         # Stage 3: Develop detailed analysis methodology

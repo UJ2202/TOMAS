@@ -49,7 +49,7 @@ def execute_research_mode(
 
         # Stage 2: Generate idea
         print("💡 Generating research idea...")
-        denario.get_idea(mode=mode, llm=llm, iterations=iterations, verbose=True)
+        denario.get_idea(mode=mode, llm=llm)
         results['idea'] = denario.research.idea
 
         # Stage 3: Check idea novelty (optional, can be slow)

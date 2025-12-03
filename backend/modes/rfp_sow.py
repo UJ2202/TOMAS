@@ -1,116 +1,146 @@
 """
 RFP/SOW Intelligence Mode
 
-Analyzes RFP (Request for Proposal) and SOW (Statement of Work) documents
-to generate cloud architecture proposals, cost estimates, and executive reports.
+Analyzes RFP (Request for Proposal) and SOW (Statement of Work) documents using CMBAgent
+to generate cloud architecture proposals, cost estimates, and implementation plans.
 """
 
-from core.mode import AgentMode, InputField, OutputType, InputFieldType
-from core.mode_registry import registry
+from core.mode import Mode, InputField, OutputField, ModeConfig
+from core.enums import EngineType
+from core.mode_registry import ModeRegistry
 
-rfp_sow_mode = AgentMode(
+
+# Define RFP/SOW Mode
+rfp_sow_mode = Mode(
     id="rfp_sow",
-    name="RFP/SOW Intelligence",
-    description="Analyze RFP/SOW documents and generate cloud architecture proposals with cost estimates",
-    category="analysis",
-    icon="FileText",
+    name="RFP/SOW Analysis",
+    description="Analyze RFP documents and generate technical proposals with architecture diagrams, cost estimates, and SOW",
+    engine=EngineType.CMBAGENT,
+    icon="📄",
+
     inputs=[
         InputField(
             name="rfp_document",
-            type=InputFieldType.FILE,
-            label="RFP/SOW Document",
-            placeholder="Upload your RFP or SOW document (PDF, DOCX, TXT)",
+            type="file",
+            label="RFP Document",
+            placeholder="Upload RFP document",
             required=True,
-            help_text="The Request for Proposal or Statement of Work document to analyze"
-        ),
-        InputField(
-            name="additional_context",
-            type=InputFieldType.TEXTAREA,
-            label="Additional Context",
-            placeholder="Provide any additional context, constraints, or requirements...",
-            required=False,
-            help_text="Any additional information to consider during analysis"
+            accept=".pdf,.docx,.txt",
+            help_text="Upload the RFP or requirements document to analyze"
         ),
         InputField(
             name="cloud_provider",
-            type=InputFieldType.SELECT,
-            label="Cloud Provider",
+            type="select",
+            label="Preferred Cloud Provider",
             options=["AWS", "Azure", "GCP", "Multi-Cloud", "On-Premise"],
-            default="AWS",
             required=True,
-            help_text="Primary cloud platform for architecture design"
+            help_text="Select the primary cloud platform for architecture design"
         ),
         InputField(
-            name="budget_constraint",
-            type=InputFieldType.TEXT,
-            label="Budget Constraint (USD/month)",
-            placeholder="e.g., 10000",
+            name="budget_range",
+            type="text",
+            label="Budget Range (Optional)",
+            placeholder="e.g., $50K-$100K",
             required=False,
-            help_text="Maximum monthly budget in USD"
+            help_text="Specify budget constraints for cost optimization"
         ),
         InputField(
-            name="compliance_requirements",
-            type=InputFieldType.MULTISELECT,
-            label="Compliance Requirements",
-            options=["SOC2", "HIPAA", "PCI-DSS", "GDPR", "FedRAMP", "ISO27001", "None"],
-            default=[],
+            name="timeline",
+            type="text",
+            label="Timeline (Optional)",
+            placeholder="e.g., 6 months",
             required=False,
-            help_text="Select applicable compliance frameworks"
+            help_text="Expected project timeline"
         ),
         InputField(
-            name="llm",
-            type=InputFieldType.SELECT,
-            label="LLM Model",
-            options=["gpt-4o", "gpt-4.1", "claude-sonnet-4", "gemini-2.0-flash", "gemini-2.5-pro"],
-            default="gpt-4o",
-            required=True
+            name="focus_areas",
+            type="textarea",
+            label="Specific Focus Areas (Optional)",
+            placeholder="e.g., Security, Scalability, Cost optimization",
+            required=False,
+            help_text="Highlight specific areas to focus on in the analysis"
         )
     ],
+
     outputs=[
-        OutputType(
-            name="executive_summary",
-            type="document",
-            format="md",
-            description="Executive summary of the RFP/SOW analysis"
+        OutputField(
+            name="requirements_analysis",
+            type="markdown",
+            label="Requirements Analysis",
+            description="Parsed and analyzed requirements from RFP"
         ),
-        OutputType(
-            name="architecture_design",
-            type="document",
-            format="md",
-            description="Detailed cloud architecture proposal"
+        OutputField(
+            name="architecture",
+            type="markdown",
+            label="Proposed Architecture",
+            description="Technical architecture and design recommendations"
         ),
-        OutputType(
+        OutputField(
             name="architecture_diagram",
-            type="visualization",
-            format="png",
-            description="Visual architecture diagram"
+            type="file",
+            label="Architecture Diagram",
+            description="Visual architecture diagram (if generated)"
         ),
-        OutputType(
+        OutputField(
             name="cost_estimate",
-            type="data",
-            format="json",
-            description="Detailed cost breakdown and estimates"
+            type="json",
+            label="Cost Breakdown",
+            description="Detailed cost estimates by component"
         ),
-        OutputType(
-            name="implementation_plan",
-            type="document",
-            format="md",
-            description="Phased implementation roadmap"
+        OutputField(
+            name="sow",
+            type="file",
+            label="Statement of Work",
+            description="Complete SOW document"
         ),
-        OutputType(
-            name="risk_assessment",
-            type="document",
-            format="md",
-            description="Risk analysis and mitigation strategies"
+        OutputField(
+            name="risks",
+            type="markdown",
+            label="Risk Analysis",
+            description="Identified risks and mitigation strategies"
         )
     ],
-    denario_config={
-        "workflow_stages": ["analysis", "architecture", "costing", "planning"],
-        "supports_fast_mode": True,
-        "supports_cmbagent_mode": True
-    },
-    endpoint_path="/api/rfp-analysis"
+
+    config=ModeConfig(
+        engine_config={
+            "mode": "planning_and_control",
+            "initial_agent": "task_improver",  # CMBAgent will improve the task first
+            "max_rounds": 15,
+            "skip_rag_agents": True,
+            "skip_executor": False
+        },
+        timeout_minutes=90,
+        max_retries=2,
+        allow_intervention=True,
+        intervention_points=["after_requirements", "after_architecture"]
+    ),
+
+    category="consulting",
+    tags=["rfp", "sow", "architecture", "cloud", "consulting", "cmbagent"],
+    estimated_time="20-40 minutes",
+    cost_estimate="$2-4",
+
+    examples=[
+        {
+            "name": "Microservices Migration",
+            "cloud_provider": "AWS",
+            "description": "RFP for migrating monolithic application to microservices architecture"
+        },
+        {
+            "name": "Data Platform Build",
+            "cloud_provider": "GCP",
+            "description": "Building enterprise data platform with real-time analytics"
+        }
+    ],
+
+    tips=[
+        "Ensure RFP document is clear and well-formatted for best results",
+        "Specify budget range for more accurate cost estimates",
+        "You can intervene to adjust architecture before cost estimation",
+        "Multi-cloud option will provide comparison across providers",
+        "Include specific compliance requirements in focus areas if needed"
+    ]
 )
 
-# Register mode
-registry.register(rfp_sow_mode)
+# Register the mode
+ModeRegistry.register(rfp_sow_mode)

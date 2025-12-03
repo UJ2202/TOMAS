@@ -5,21 +5,12 @@ from pathlib import Path
 import uvicorn
 
 from core.config import settings
-from services.denario_service import DenarioService
-from services.mode_executor import ModeExecutor
 from routers import modes, execution
-
-# Import mode definitions to register them
-import modes as mode_definitions
-
-# Initialize services
-denario_service = DenarioService(workspace_dir=settings.WORKSPACE_DIR)
-mode_executor = ModeExecutor(denario_service)
 
 # Create FastAPI app
 app = FastAPI(
-    title="Agent Platform API",
-    description="Multi-agent system with task-specific modes",
+    title="TOMAS - Task-Oriented Multi-Agent System",
+    description="Multi-agent system with CMBAgent and Denario engines",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
@@ -39,18 +30,26 @@ workspace_path = Path(settings.WORKSPACE_DIR)
 workspace_path.mkdir(exist_ok=True)
 # app.mount("/files", StaticFiles(directory=str(workspace_path)), name="files")
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize application on startup"""
+    # Import mode definitions to register them with ModeRegistry
+    import modes as mode_definitions
+
+    # Create workspace directories
+    (workspace_path / "sessions").mkdir(exist_ok=True)
+    (workspace_path / "temp").mkdir(exist_ok=True)
+
+    print(f"✅ TOMAS initialized with workspace: {workspace_path}")
+
 # Include routers
 app.include_router(modes.router, prefix="/api")
 app.include_router(execution.router, prefix="/api")
 
-# Make services available to routers
-app.state.denario_service = denario_service
-app.state.mode_executor = mode_executor
-
 @app.get("/")
 def root():
     return {
-        "message": "Agent Platform API",
+        "message": "TOMAS - Task-Oriented Multi-Agent System",
         "version": "1.0.0",
         "docs": "/api/docs"
     }
