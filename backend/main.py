@@ -5,7 +5,7 @@ from pathlib import Path
 import uvicorn
 
 from core.config import settings
-from routers import modes, execution
+from routers import modes, execution, files
 
 # Create FastAPI app
 app = FastAPI(
@@ -33,18 +33,29 @@ workspace_path.mkdir(exist_ok=True)
 @app.on_event("startup")
 async def startup_event():
     """Initialize application on startup"""
+    # Initialize database
+    from core.database import init_db
+    try:
+        await init_db()
+        print("✅ Database initialized")
+    except Exception as e:
+        print(f"⚠️ Database initialization warning: {e}")
+
     # Import mode definitions to register them with ModeRegistry
     import modes as mode_definitions
+    from core.mode_registry import ModeRegistry
+    
+    print(f"✅ TOMAS initialized with {len(ModeRegistry.list_modes())} modes")
+    print(f"✅ Workspace: {workspace_path}")
 
     # Create workspace directories
     (workspace_path / "sessions").mkdir(exist_ok=True)
     (workspace_path / "temp").mkdir(exist_ok=True)
 
-    print(f"✅ TOMAS initialized with workspace: {workspace_path}")
-
 # Include routers
 app.include_router(modes.router, prefix="/api")
 app.include_router(execution.router, prefix="/api")
+app.include_router(files.router)
 
 @app.get("/")
 def root():

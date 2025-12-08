@@ -10,7 +10,8 @@ from pathlib import Path
 import asyncio
 from datetime import datetime
 
-from engines import EngineRegistry, EngineOutput
+from engines.base import EngineOutput
+from engines import EngineRegistry
 from core.enums import EngineType, SessionStatus, MessageRole
 from core.mode_registry import ModeRegistry
 from services.session_manager import SessionManager

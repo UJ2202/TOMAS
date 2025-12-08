@@ -19,7 +19,7 @@ from core.enums import SessionStatus
 from schemas.execution import ExecuteRequest, ExecuteResponse, TaskStatusResponse, TaskResultResponse
 
 
-router = APIRouter(prefix="/api", tags=["execution"])
+router = APIRouter(tags=["execution"])
 
 
 class ExecuteRequest(BaseModel):

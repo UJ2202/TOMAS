@@ -1,63 +1,73 @@
-from pydantic import BaseModel
-from typing import List, Dict, Any, Callable, Optional
-from enum import Enum
+from pydantic import BaseModel, Field
+from typing import List, Dict, Any, Optional
+from core.enums import EngineType
 
-class InputFieldType(str, Enum):
-    """Types of input fields"""
-    TEXT = "text"
-    TEXTAREA = "textarea"
-    FILE = "file"
-    SELECT = "select"
-    MULTISELECT = "multiselect"
-    NUMBER = "number"
-    CHECKBOX = "checkbox"
 
 class InputField(BaseModel):
     """Defines an input field for a mode"""
     name: str
-    type: InputFieldType
+    type: str  # "text", "textarea", "file", "select", "multiselect", "number", "checkbox"
     label: str
     placeholder: str = ""
     required: bool = True
-    options: List[str] = []
+    options: List[str] = Field(default_factory=list)
     default: Any = None
     help_text: str = ""
+    accept: Optional[str] = None  # For file inputs
 
-class OutputType(BaseModel):
-    """Defines an output type for a mode"""
+
+class OutputField(BaseModel):
+    """Defines an output field for a mode"""
     name: str
-    type: str  # 'document', 'visualization', 'data', 'code'
-    format: str  # 'pdf', 'md', 'png', 'json', 'py', etc.
-    description: str
-    mime_type: str = ""
+    type: str  # "text", "markdown", "file", "plot", "data"
+    label: str
+    description: str = ""
 
-class AgentMode(BaseModel):
+
+class ModeConfig(BaseModel):
+    """Configuration for mode execution"""
+    engine_config: Dict[str, Any] = Field(default_factory=dict)
+    timeout_minutes: int = 60
+    max_retries: int = 3
+    allow_intervention: bool = False
+    intervention_points: List[str] = Field(default_factory=list)
+
+
+class Mode(BaseModel):
     """
-    Definition of an Agent Mode
+    Definition of a Mode
 
     A mode represents a specific task type with:
     - Input requirements
     - Output specifications
-    - Execution strategy
+    - Engine selection
+    - Execution configuration
     """
     id: str
     name: str
     description: str
-    category: str  # 'research', 'analysis', 'generation', 'automation'
-    icon: str  # Lucide icon name
+    engine: EngineType  # Which engine to use (CMBAGENT, DENARIO, etc.)
+    icon: str = "🤖"
 
     # Input/Output schema
-    inputs: List[InputField]
-    outputs: List[OutputType]
+    inputs: List[InputField] = Field(default_factory=list)
+    outputs: List[OutputField] = Field(default_factory=list)
 
     # Configuration
-    denario_config: Dict[str, Any] = {}
+    config: Optional[ModeConfig] = None
 
-    # Future API endpoint
-    endpoint_path: str
-
-    # Execution strategy (set programmatically)
-    strategy: Optional[Callable] = None
+    # Metadata
+    category: str = "general"
+    tags: List[str] = Field(default_factory=list)
+    estimated_time: str = "5-10 minutes"
+    cost_estimate: str = "$0.10-1.00"
+    examples: List[Dict[str, Any]] = Field(default_factory=list)
+    tips: List[str] = Field(default_factory=list)
 
     class Config:
-        arbitrary_types_allowed = True
+        use_enum_values = False  # Keep enum objects
+
+
+# Backward compatibility alias
+AgentMode = Mode
+OutputType = OutputField

@@ -10,7 +10,7 @@ from typing import List, Dict, Any
 from core.mode_registry import ModeRegistry
 
 
-router = APIRouter(prefix="/api", tags=["modes"])
+router = APIRouter(tags=["modes"])
 
 
 @router.get("/modes")

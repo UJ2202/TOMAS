@@ -1,0 +1,22 @@
+# CMBAgent Engine Dependencies
+# Install with: pip install -r requirements-cmbagent.txt
+
+# LLM APIs
+anthropic>=0.40.0
+openai>=1.59.5
+mistralai>=1.2.4
+
+# Configuration
+ruamel.yaml>=0.18.6
+jsonref>=1.1.0
+
+# Data processing
+pandas>=2.2.3
+numpy>=1.26.0
+
+# Development
+ipython>=8.31.0
+
+# Optional: Install these manually if needed
+# cmbagent_autogen>=0.0.91post11  # May not be on PyPI
+# cobaya  # Cosmology package, may have conflicts

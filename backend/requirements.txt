@@ -1,58 +1,25 @@
-# Core Framework
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-python-multipart==0.0.6
-websockets==12.0
+# TOMAS Backend Requirements
+# 
+# For complete installation:
+#   pip install -r requirements.txt
+#
+# For modular installation:
+#   pip install -r requirements-core.txt
+#   pip install -r requirements-denario.txt  # Optional: for Denario engine
+#   pip install -r requirements-cmbagent.txt  # Optional: for CMBAgent engine
 
-# Database
-sqlalchemy==2.0.25
-alembic==1.13.1
-aiosqlite==0.19.0
+# ============================================
+# Core Dependencies (Required)
+# ============================================
+-r requirements-core.txt
 
-# Validation & Settings
-pydantic==2.5.3
-pydantic-settings==2.1.0
+# ============================================
+# Engine Dependencies (Optional)
+# ============================================
+# Uncomment the engines you want to use:
 
-# Authentication (for future)
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+# Denario Engine (Scientific Research)
+-r requirements-denario.txt
 
-# Utilities
-python-dotenv==1.0.0
-pyyaml==6.0.1
-httpx==0.26.0
-aiofiles==23.2.1
-PyPDF2==3.0.1
-
-# Monitoring & Logging
-structlog==24.1.0
-
-# Testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
-
-# Denario dependencies
-langchain-google-genai
-langchain-anthropic>=0.3.10
-langchain-openai>=0.3.12
-langgraph>=0.3.25
-google-cloud-aiplatform
-google-ai-generativelanguage>=0.6.17
-flatbuffers>=24.12.23
-filelock>=3.17.0
-pymupdf
-pillow
-jsonschema
-futurehouse-client
-json5
-
-# CMBAgent dependencies
-anthropic
-mistralai
-ruamel.yaml
-cmbagent_autogen>=0.0.91post11
-jsonref==1.1.0
-cobaya
-pandas>=2.2
-ipython
+# CMBAgent Engine (Planning & Control)
+-r requirements-cmbagent.txt

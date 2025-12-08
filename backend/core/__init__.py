@@ -1,13 +1,12 @@
 # Core package
-from .mode import AgentMode, InputField, OutputType, InputFieldType
-from .mode_registry import registry
+from .mode import Mode, InputField, OutputField
+from .mode_registry import ModeRegistry
 from .config import settings
 
 __all__ = [
-    'AgentMode',
+    'Mode',
     'InputField',
-    'OutputType',
-    'InputFieldType',
-    'registry',
+    'OutputField',
+    'ModeRegistry',
     'settings'
 ]

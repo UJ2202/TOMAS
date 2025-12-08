@@ -1,0 +1,25 @@
+# Denario Engine Dependencies
+# Install with: pip install -r requirements-denario.txt
+
+# LangChain ecosystem
+langchain-core>=0.3.28
+langchain-community>=0.3.15
+langchain-google-genai>=2.0.5
+langchain-anthropic>=0.3.10
+langchain-openai>=0.3.12
+langgraph>=0.3.25
+
+# Google AI
+google-cloud-aiplatform>=1.72.0
+google-ai-generativelanguage>=0.6.17
+
+# Document processing
+pymupdf>=1.25.2
+pillow>=11.0.0
+PyPDF2>=3.0.1
+
+# Utilities
+flatbuffers>=24.12.23
+filelock>=3.17.0
+jsonschema>=4.23.0
+json5>=0.10.0

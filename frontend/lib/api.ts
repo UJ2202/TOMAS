@@ -1,7 +1,85 @@
-import { AgentMode, TaskStatus, TaskResult } from './types';
+import axios from 'axios';
+import { AgentMode, Mode } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+export const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor for auth (future)
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('tomas-auth-token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor for errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('tomas-auth-token');
+    }
+    return Promise.reject(error);
+  }
+);
+
+// API Methods
+export const modesApi = {
+  list: () => api.get('/modes'),
+  get: (modeId: string) => api.get(`/modes/${modeId}`),
+  byCategory: (category: string) => api.get(`/modes/category/${category}`),
+  byEngine: (engine: string) => api.get(`/modes/engine/${engine}`),
+};
+
+export const executionApi = {
+  execute: (data: {
+    mode_id: string;
+    task: string;
+    input_data: Record<string, any>;
+  }) => api.post('/execute', data),
+  
+  stream: (data: {
+    mode_id: string;
+    task: string;
+    input_data: Record<string, any>;
+  }) => api.post('/execute/stream', data),
+  
+  status: (sessionId: string) => api.get(`/tasks/${sessionId}/status`),
+  results: (sessionId: string) => api.get(`/tasks/${sessionId}/results`),
+  messages: (sessionId: string) => api.get(`/tasks/${sessionId}/messages`),
+  pause: (sessionId: string) => api.post(`/tasks/${sessionId}/pause`),
+  resume: (sessionId: string) => api.post(`/tasks/${sessionId}/resume`),
+  cancel: (sessionId: string) => api.post(`/tasks/${sessionId}/cancel`),
+};
+
+export const filesApi = {
+  upload: (sessionId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/files/${sessionId}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  list: (sessionId: string) => api.get(`/files/${sessionId}`),
+  download: (sessionId: string, fileId: string) => 
+    api.get(`/files/${sessionId}/${fileId}`, {
+      responseType: 'blob',
+    }),
+  delete: (sessionId: string, fileId: string) =>
+    api.delete(`/files/${sessionId}/${fileId}`),
+};
+
+// Legacy APIClient class for backward compatibility
 export class APIClient {
   private baseURL: string;
 

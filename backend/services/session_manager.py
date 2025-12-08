@@ -411,3 +411,19 @@ class SessionManager:
         await self.db.refresh(session)
 
         return session
+
+    async def delete_file(self, file_id: str) -> None:
+        """
+        Delete a file record from the database
+
+        Args:
+            file_id: File ID to delete
+        """
+        result = await self.db.execute(
+            select(SessionFile).where(SessionFile.id == file_id)
+        )
+        session_file = result.scalar_one_or_none()
+
+        if session_file:
+            await self.db.delete(session_file)
+            await self.db.commit()
